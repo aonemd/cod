@@ -1,3 +1,9 @@
+mod cli;
+
+use cli::Cli;
+
+use structopt::StructOpt;
+
 fn main() {
-    println!("Hello, world!");
+    let cli = Cli::from_args();
 }
