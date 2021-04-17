@@ -5,10 +5,10 @@ use regex::Regex;
 const DATE_PATTERN: &str = r"@[A-Z0-9,-/]+";
 const TAG_PATTERN: &str = r"\+[a-zA-Z0-9_]+";
 
-struct Parser {
-    desc: String,
-    date: NaiveDate,
-    tags: Vec<String>,
+pub struct Parser {
+    pub desc: String,
+    pub date: NaiveDate,
+    pub tags: Vec<String>,
 }
 
 impl Parser {

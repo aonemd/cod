@@ -4,8 +4,12 @@ use structopt::StructOpt;
 #[structopt(name = "cod", about = "The command line todo app.")]
 pub struct Cli {
     #[structopt(subcommand)]
-    command: Command,
+    pub command: Command,
 }
 
 #[derive(Debug, StructOpt)]
-enum Command {}
+pub enum Command {
+    Add {
+        content: Vec<String>,
+    },
+}

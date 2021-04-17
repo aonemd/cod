@@ -1,7 +1,9 @@
 use super::item::Item;
 
+use chrono::{NaiveDate};
+
 pub struct Todo {
-    items: Vec<Item>,
+    pub items: Vec<Item>,
 }
 
 impl Todo {
@@ -11,7 +13,7 @@ impl Todo {
         }
     }
 
-    pub fn add(&mut self, desc: String, date: &str, tags: Vec<String>) {
+    pub fn add(&mut self, desc: String, date: NaiveDate, tags: Vec<String>) {
         let next_id = self.get_next_id();
         let new_item = Item::new(next_id, desc, date, tags);
         self.items.push(new_item);
@@ -37,11 +39,13 @@ impl Todo {
 mod tests {
     use super::*;
 
+    use chrono::{Local};
+
     #[test]
     fn add_increments_items_length() {
         let mut todo = Todo::new();
 
-        todo.add(String::from("Hello, world!"), "2012-12-12", vec![String::from("tag1")]);
+        todo.add(String::from("Hello, world!"), Local::today().naive_local(), vec![String::from("tag1")]);
 
         assert_eq!(todo.items.len(), 1);
     }
@@ -49,10 +53,10 @@ mod tests {
     #[test]
     fn add_increments_last_item_id() {
         let mut todo = Todo::new();
-        todo.add(String::from("Hello, world!"), "2012-12-12", vec![String::from("tag1")]);
-        todo.add(String::from("Hello, world war II!"), "2012-12-12", vec![String::from("tag1")]);
+        todo.add(String::from("Hello, world!"), Local::today().naive_local(), vec![String::from("tag1")]);
+        todo.add(String::from("Hello, world war II!"), Local::today().naive_local(), vec![String::from("tag1")]);
 
-        todo.add(String::from("Hello, world war III!"), "2012-12-12", vec![String::from("tag1")]);
+        todo.add(String::from("Hello, world war III!"), Local::today().naive_local(), vec![String::from("tag1")]);
 
         assert_eq!(todo.items.last().unwrap().id, 3);
     }
