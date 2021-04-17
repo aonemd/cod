@@ -69,6 +69,14 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_desc_in_the_end() -> () {
+        let parser = Parser::new("@2021-04-13 +work Hello world");
+        let test_date = String::from("Hello world");
+
+        assert_eq!(parser.desc, test_date);
+    }
+
+    #[test]
     fn test_parse_date_formal() -> () {
         let parser = Parser::new("Hello world @2021-04-13 +personal");
         let test_date = NaiveDate::from_ymd(2021, 04, 13);
