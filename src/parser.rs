@@ -11,12 +11,20 @@ struct Parser {
 
 impl Parser {
     pub fn new(input: &str) -> Self {
+        let desc = Self::parse_desc(input);
         let date = Self::parse_date(input);
 
         Self {
-            desc: String::from(""),
+            desc,
             date,
         }
+    }
+
+    fn parse_desc(input: &str) -> String {
+        let date_re = Regex::new(DATE_PATTERN).unwrap();
+        let desc = date_re.replace_all(input, "");
+
+        desc.trim().to_string()
     }
 
     fn parse_date(input: &str) -> NaiveDate {
@@ -35,6 +43,14 @@ impl Parser {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_parse_desc() -> () {
+        let parser = Parser::new("Hello world @2021-04-13");
+        let test_date = String::from("Hello world");
+
+        assert_eq!(parser.desc, test_date);
+    }
 
     #[test]
     fn test_parse_date_formal() -> () {
