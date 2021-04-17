@@ -26,7 +26,9 @@ impl Parser {
 
     fn parse_desc(input: &str) -> String {
         let date_re = Regex::new(DATE_PATTERN).unwrap();
+        let tag_re = Regex::new(TAG_PATTERN).unwrap();
         let desc = date_re.replace_all(input, "");
+        let desc = tag_re.replace_all(&desc, "");
 
         desc.trim().to_string()
     }
@@ -60,7 +62,7 @@ mod tests {
 
     #[test]
     fn test_parse_desc() -> () {
-        let parser = Parser::new("Hello world @2021-04-13");
+        let parser = Parser::new("Hello world @2021-04-13 +work");
         let test_date = String::from("Hello world");
 
         assert_eq!(parser.desc, test_date);
@@ -68,7 +70,7 @@ mod tests {
 
     #[test]
     fn test_parse_date_formal() -> () {
-        let parser = Parser::new("Hello world @2021-04-13");
+        let parser = Parser::new("Hello world @2021-04-13 +personal");
         let test_date = NaiveDate::from_ymd(2021, 04, 13);
 
         assert_eq!(parser.date, test_date);
