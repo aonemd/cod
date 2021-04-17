@@ -3,20 +3,24 @@ use date_time_parser::DateParser;
 use regex::Regex;
 
 const DATE_PATTERN: &str = r"@[A-Z0-9,-/]+";
+const TAG_PATTERN: &str = r"\+[a-zA-Z0-9_]+";
 
 struct Parser {
     desc: String,
     date: NaiveDate,
+    tags: Vec<String>,
 }
 
 impl Parser {
     pub fn new(input: &str) -> Self {
         let desc = Self::parse_desc(input);
         let date = Self::parse_date(input);
+        let tags = Self::parse_tags(input);
 
         Self {
             desc,
             date,
+            tags,
         }
     }
 
@@ -37,6 +41,16 @@ impl Parser {
         } else {
             Local::today().naive_local()
         }
+    }
+
+    fn parse_tags(input: &str) -> Vec<String> {
+        let mut tags: Vec<String> = vec![];
+        let re = Regex::new(TAG_PATTERN).unwrap();
+        for caps in re.captures_iter(input) {
+            tags.push((&caps[0])[1..].to_string());
+        }
+
+        tags
     }
 }
 
@@ -74,5 +88,13 @@ mod tests {
         let today_date = Local::today().naive_local();
 
         assert_eq!(parser.date, today_date);
+    }
+
+    #[test]
+    fn test_parse_tags() -> () {
+        let parser = Parser::new("Hello world +inbox +work @tomorrow");
+        let expected_tags = vec!["inbox".to_string(), "work".to_string()];
+
+        assert_eq!(parser.tags, expected_tags);
     }
 }
