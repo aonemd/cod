@@ -8,4 +8,6 @@ edition = "2018"
 
 [dependencies]
 structopt = { version = "0.3", default-features = false }
+regex = "1"
 chrono = "0.4"
+date_time_parser = "0.1.0"
