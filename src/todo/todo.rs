@@ -1,16 +1,29 @@
 use super::item::Item;
+use super::todo_serialized::TodoSerialized;
 
 use chrono::{NaiveDate};
 
+#[derive(Debug)]
 pub struct Todo {
     pub items: Vec<Item>,
 }
 
+impl From<TodoSerialized> for Todo {
+    fn from(todo_serialized: TodoSerialized) -> Self {
+        let items = todo_serialized.internal_map().values().cloned().flatten().collect();
+
+        Self {
+            items,
+        }
+    }
+}
+
 impl Todo {
     pub fn new() -> Self {
-        Self {
-            items: Vec::new(),
-        }
+        let data = std::fs::read_to_string("todos.yml").unwrap();
+        let todo_serialized: TodoSerialized = serde_yaml::from_str(&data).unwrap();
+
+        Todo::from(todo_serialized)
     }
 
     pub fn add(&mut self, desc: String, date: NaiveDate, tags: Vec<String>) {
@@ -59,5 +72,6 @@ mod tests {
         todo.add(String::from("Hello, world war III!"), Local::today().naive_local(), vec![String::from("tag1")]);
 
         assert_eq!(todo.items.last().unwrap().id, 3);
+        assert_eq!(todo.items.len(), 3);
     }
 }
