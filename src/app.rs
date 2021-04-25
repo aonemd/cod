@@ -3,12 +3,13 @@ use crate::Command;
 use crate::Parser;
 use crate::Todo;
 use crate::TodoSerialized;
-
-
-use serde_yaml;
+use crate::YamlStore;
 
 pub fn run(cli: Cli) -> () {
-    let mut todo = Todo::new();
+    let store = &YamlStore::new(None);
+    let todo_serialized: TodoSerialized = *store.read();
+
+    let mut todo = Todo::from(todo_serialized);
 
     match cli.command {
         Command::Add {content} => {
@@ -16,10 +17,7 @@ pub fn run(cli: Cli) -> () {
 
             todo.add(parser.desc, parser.date, parser.tags);
             let todo_serialized = TodoSerialized::from(&todo);
-            let s = serde_yaml::to_string(&todo_serialized).unwrap();
-            println!("Items \"{:?}\" added!", s);
-
-            std::fs::write("todos.yml", s).unwrap();
+            store.write(&todo_serialized);
         }
     }
 }

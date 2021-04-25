@@ -20,10 +20,9 @@ impl From<TodoSerialized> for Todo {
 
 impl Todo {
     pub fn new() -> Self {
-        let data = std::fs::read_to_string("todos.yml").unwrap();
-        let todo_serialized: TodoSerialized = serde_yaml::from_str(&data).unwrap();
-
-        Todo::from(todo_serialized)
+        Self {
+            items: Vec::new(),
+        }
     }
 
     pub fn add(&mut self, desc: String, date: NaiveDate, tags: Vec<String>) {
