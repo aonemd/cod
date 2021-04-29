@@ -13,8 +13,9 @@ impl<'a> ItemPresenter<'a> {
 
     pub fn present(&self) -> String {
         format!(
-            "{} {} {} {}",
+            "{} {} {} {} {}",
             self.present_id(),
+            self.present_completed(),
             self.present_desc(),
             self.present_date(),
             self.present_tags()
@@ -23,6 +24,14 @@ impl<'a> ItemPresenter<'a> {
 
     fn present_id(&self) -> String {
         self.item.id.to_string()
+    }
+
+    fn present_completed(&self) -> String {
+        if self.item.completed {
+            "[X]".to_string()
+        } else {
+            "[ ]".to_string()
+        }
     }
 
     fn present_desc(&self) -> String {

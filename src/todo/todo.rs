@@ -34,7 +34,8 @@ impl Todo {
 
     pub fn add(&mut self, desc: String, date: NaiveDate, tags: Vec<String>) {
         let next_id = self.get_next_id();
-        let new_item = Item::new(next_id, desc, date, tags);
+        let completed = false;
+        let new_item = Item::new(next_id, desc, date, tags, completed);
         self.items.push(new_item);
     }
 
