@@ -4,26 +4,30 @@ use chrono::Local;
 
 pub struct ItemPresenter<'a> {
     item: &'a Item,
+    separator_spacing: usize,
     id_spacing: usize,
 }
 
 impl<'a> ItemPresenter<'a> {
-    pub fn new(item: &'a Item, id_spacing: usize) -> Self {
+    pub fn new(item: &'a Item, separator_spacing: usize, id_spacing: usize) -> Self {
         Self {
             item,
+            separator_spacing,
             id_spacing,
         }
     }
 
     pub fn present(&self) -> String {
         format!(
-            "{:id_width$} {} {} {} {}",
+            "{:id_width$} {:completed_width$} {:date_width$} {} {}",
             self.present_id(),
             self.present_completed(),
-            self.present_desc(),
             self.present_date(),
+            self.present_desc(),
             self.present_tags(),
-            id_width = self.id_spacing
+            id_width = self.id_spacing + self.separator_spacing,
+            completed_width = 3 + self.separator_spacing,
+            date_width = 11 + self.separator_spacing,
         )
     }
 
@@ -89,7 +93,7 @@ mod tests {
             vec![String::from("tag1")],
             false,
         );
-        let item_presenter = ItemPresenter::new(&item, 1);
+        let item_presenter = ItemPresenter::new(&item, 2, 1);
 
         assert!(&item_presenter.present().contains(&1.to_string()));
     }
@@ -103,7 +107,7 @@ mod tests {
             vec![String::from("tag1")],
             false,
         );
-        let item_presenter = ItemPresenter::new(&item, 1);
+        let item_presenter = ItemPresenter::new(&item, 2, 1);
 
         assert!(&item_presenter.present().contains("Hello"));
     }
@@ -117,7 +121,7 @@ mod tests {
             vec![String::from("tag1")],
             false,
         );
-        let item_presenter = ItemPresenter::new(&item, 1);
+        let item_presenter = ItemPresenter::new(&item, 2, 1);
 
         println!("{}", item_presenter.present());
         assert!(&item_presenter.present().contains("@Today"));
@@ -132,7 +136,7 @@ mod tests {
             vec![String::from("tag1"), String::from("tag2")],
             false,
         );
-        let item_presenter = ItemPresenter::new(&item, 1);
+        let item_presenter = ItemPresenter::new(&item, 2, 1);
 
         println!("{}", item_presenter.present());
         assert!(&item_presenter.present().contains("+tag1 +tag2"));
@@ -147,7 +151,7 @@ mod tests {
             vec![String::from("tag1"), String::from("tag2")],
             true,
         );
-        let item_presenter = ItemPresenter::new(&item, 1);
+        let item_presenter = ItemPresenter::new(&item, 2, 1);
 
         println!("{}", item_presenter.present());
         assert!(&item_presenter.present().contains("[X]"));
