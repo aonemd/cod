@@ -1,5 +1,6 @@
 use super::item::Item;
 use super::todo_serialized::TodoSerialized;
+use super::todo_presenter::TodoPresenter;
 
 use chrono::{NaiveDate};
 
@@ -23,6 +24,12 @@ impl Todo {
         Self {
             items: Vec::new(),
         }
+    }
+
+    pub fn list(&self) -> () {
+        let presenter = TodoPresenter::new(self);
+
+        presenter.present();
     }
 
     pub fn add(&mut self, desc: String, date: NaiveDate, tags: Vec<String>) {

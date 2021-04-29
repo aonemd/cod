@@ -13,7 +13,7 @@ pub fn run(cli: Cli) -> () {
 
     match cli.command {
         Command::List => {
-            println!("{:?}", todo);
+            todo.list();
         },
         Command::Add {content} => {
             let parser = Parser::new(&content.join(" "));
