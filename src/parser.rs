@@ -2,7 +2,7 @@ use chrono::{Local, NaiveDate};
 use date_time_parser::DateParser;
 use regex::Regex;
 
-const DATE_PATTERN: &str = r"@[A-Z0-9,-/]+";
+const DATE_PATTERN: &str = r"@[a-zA-Z0-9,-/]+";
 const TAG_PATTERN: &str = r"\+[a-zA-Z0-9_]+";
 
 pub struct Parser {
@@ -36,7 +36,7 @@ impl Parser {
     fn parse_date(input: &str) -> NaiveDate {
         let re = Regex::new(DATE_PATTERN).unwrap();
         if let Some(date) = re.captures(input) {
-            DateParser::parse(&date[0]).unwrap_or(
+            DateParser::parse(&date[0][1..]).unwrap_or(
                 NaiveDate::parse_from_str(&date[0][1..], "%Y-%m-%d")
                     .unwrap_or(Local::today().naive_local()),
             )
