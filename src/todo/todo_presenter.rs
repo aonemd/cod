@@ -13,8 +13,10 @@ impl<'a> TodoPresenter<'a> {
     }
 
     pub fn present(&self) -> () {
+        let id_spacing = self.todo.last_id.to_string().len();
+
         for item in &self.todo.items {
-            let presented_item = ItemPresenter::new(&item).present();
+            let presented_item = ItemPresenter::new(&item, id_spacing).present();
 
             println!("{}", presented_item);
         }

@@ -7,14 +7,17 @@ use chrono::{NaiveDate};
 #[derive(Debug)]
 pub struct Todo {
     pub items: Vec<Item>,
+    pub last_id: u32,
 }
 
 impl From<TodoSerialized> for Todo {
     fn from(todo_serialized: TodoSerialized) -> Self {
         let items = todo_serialized.internal_map().values().cloned().flatten().collect();
+        let last_id = largest_id(&items);
 
         Self {
             items,
+            last_id,
         }
     }
 }
@@ -23,6 +26,7 @@ impl Todo {
     pub fn new() -> Self {
         Self {
             items: Vec::new(),
+            last_id: 0,
         }
     }
 
@@ -44,15 +48,31 @@ impl Todo {
     }
 
     fn last_id(&self) -> u32 {
-        match self.items.len() {
-            0 => 0,
-            _ => {
-                let mut sorted: Vec<u32> = self.items.iter().map(|item| item.id).collect();
-                sorted.sort_by(|a, b| a.cmp(&b));
-                *sorted.last().unwrap()
-            }
-        }
+        // let last_id = match self.items.len() {
+        //     0 => 0,
+        //     _ => {
+        //         let mut sorted: Vec<u32> = self.items.iter().map(|item| item.id).collect();
+        //         sorted.sort_by(|a, b| a.cmp(&b));
+        //         *sorted.last().unwrap()
+        //     }
+        // };
+        //
+        // last_id
+        largest_id(&self.items)
     }
+}
+
+fn largest_id(items: &Vec<Item>) -> u32 {
+    let last_id = match items.len() {
+        0 => 0,
+        _ => {
+            let mut sorted: Vec<u32> = items.iter().map(|item| item.id).collect();
+            sorted.sort_by(|a, b| a.cmp(&b));
+            *sorted.last().unwrap()
+        }
+    };
+
+    last_id
 }
 
 #[cfg(test)]

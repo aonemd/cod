@@ -4,21 +4,26 @@ use chrono::Local;
 
 pub struct ItemPresenter<'a> {
     item: &'a Item,
+    id_spacing: usize,
 }
 
 impl<'a> ItemPresenter<'a> {
-    pub fn new(item: &'a Item) -> Self {
-        Self { item }
+    pub fn new(item: &'a Item, id_spacing: usize) -> Self {
+        Self {
+            item,
+            id_spacing,
+        }
     }
 
     pub fn present(&self) -> String {
         format!(
-            "{} {} {} {} {}",
+            "{:id_width$} {} {} {} {}",
             self.present_id(),
             self.present_completed(),
             self.present_desc(),
             self.present_date(),
-            self.present_tags()
+            self.present_tags(),
+            id_width = self.id_spacing
         )
     }
 
@@ -83,7 +88,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1")],
         );
-        let item_presenter = ItemPresenter::new(&item);
+        let item_presenter = ItemPresenter::new(&item, 1);
 
         assert!(&item_presenter.present().contains(&1.to_string()));
     }
@@ -96,7 +101,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1")],
         );
-        let item_presenter = ItemPresenter::new(&item);
+        let item_presenter = ItemPresenter::new(&item, 1);
 
         assert!(&item_presenter.present().contains("Hello"));
     }
@@ -109,7 +114,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1")],
         );
-        let item_presenter = ItemPresenter::new(&item);
+        let item_presenter = ItemPresenter::new(&item, 1);
 
         println!("{}", item_presenter.present());
         assert!(&item_presenter.present().contains("@Today"));
@@ -123,7 +128,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1"), String::from("tag2")],
         );
-        let item_presenter = ItemPresenter::new(&item);
+        let item_presenter = ItemPresenter::new(&item, 1);
 
         println!("{}", item_presenter.present());
         assert!(&item_presenter.present().contains("+tag1 +tag2"));
