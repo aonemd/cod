@@ -12,6 +12,7 @@ pub struct Cli {
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
+    List,
     Add {
         content: Vec<String>,
     },

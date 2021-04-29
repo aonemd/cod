@@ -12,6 +12,9 @@ pub fn run(cli: Cli) -> () {
     let mut todo = Todo::from(todo_serialized);
 
     match cli.command {
+        Command::List => {
+            println!("{:?}", todo);
+        },
         Command::Add {content} => {
             let parser = Parser::new(&content.join(" "));
 
