@@ -87,6 +87,7 @@ mod tests {
             "Hello".to_string(),
             Local::today().naive_local(),
             vec![String::from("tag1")],
+            false,
         );
         let item_presenter = ItemPresenter::new(&item, 1);
 
@@ -100,6 +101,7 @@ mod tests {
             "Hello".to_string(),
             Local::today().naive_local(),
             vec![String::from("tag1")],
+            false,
         );
         let item_presenter = ItemPresenter::new(&item, 1);
 
@@ -113,6 +115,7 @@ mod tests {
             "Hello".to_string(),
             Local::today().naive_local(),
             vec![String::from("tag1")],
+            false,
         );
         let item_presenter = ItemPresenter::new(&item, 1);
 
@@ -127,10 +130,26 @@ mod tests {
             "Hello".to_string(),
             Local::today().naive_local(),
             vec![String::from("tag1"), String::from("tag2")],
+            false,
         );
         let item_presenter = ItemPresenter::new(&item, 1);
 
         println!("{}", item_presenter.present());
         assert!(&item_presenter.present().contains("+tag1 +tag2"));
+    }
+
+    #[test]
+    fn it_presents_item_completed() {
+        let item = Item::new(
+            1,
+            "Hello".to_string(),
+            Local::today().naive_local(),
+            vec![String::from("tag1"), String::from("tag2")],
+            true,
+        );
+        let item_presenter = ItemPresenter::new(&item, 1);
+
+        println!("{}", item_presenter.present());
+        assert!(&item_presenter.present().contains("[X]"));
     }
 }
