@@ -12,7 +12,9 @@ pub struct Cli {
 
 #[derive(Debug, StructOpt)]
 pub enum Command {
+    #[structopt(name = "list", visible_alias = "l")]
     List,
+    #[structopt(name = "add", visible_alias = "a")]
     Add {
         content: Vec<String>,
     },
