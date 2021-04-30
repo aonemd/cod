@@ -20,17 +20,18 @@ impl<'a> ItemPresenter<'a> {
 
     pub fn present(&self) -> String {
         let (completed, completed_len) = self.present_completed();
+        let (date, date_len) = self.present_date();
 
         format!(
             "{:id_width$} {:completed_width$} {:date_width$} {} {}",
             self.present_id(),
             completed,
-            self.present_date(),
+            date,
             self.present_desc(),
             self.present_tags(),
             id_width = self.id_spacing + self.separator_spacing,
             completed_width = completed_len + self.separator_spacing,
-            date_width = 11 + self.separator_spacing,
+            date_width = date_len + self.separator_spacing,
         )
     }
 
@@ -46,25 +47,42 @@ impl<'a> ItemPresenter<'a> {
         }
     }
 
-    fn present_desc(&self) -> String {
-        self.item.desc.clone()
-    }
-
-    fn present_date(&self) -> String {
+    fn present_date(&self) -> (String, usize) {
         let _today = Local::today().naive_local();
         let _yesterday = _today.pred();
         let _tomorrow = _today.succ();
 
-        let date_str = match self.item.date {
-            a if a == _yesterday => "Yesterday".to_string(),
-            a if a == _today => "Today".to_string(),
-            a if a == _tomorrow => "Tomorrow".to_string(),
-            _ => self.item.date.to_string(),
+        let (date, uncolored_len) = match self.item.date {
+            a if a == _yesterday => {
+                let mut date_str = String::from("@");
+                date_str.push_str("Yesterday");
+                (date_str.magenta().to_string(), date_str.len())
+            },
+            a if a == _today => {
+                let mut date_str = String::from("@");
+                date_str.push_str("Today");
+                (date_str.bold().cyan().to_string(), date_str.len())
+            },
+            a if a == _tomorrow => {
+                let mut date_str = String::from("@");
+                date_str.push_str("Tomorrow");
+                (date_str.cyan().to_string(), date_str.len())
+            },
+            _ => {
+                let mut date_str = String::from("@");
+                date_str.push_str(&self.item.date.to_string());
+                (date_str.cyan().to_string(), date_str.len())
+            },
         };
 
-        let mut date = String::from("@");
-        date.push_str(&date_str);
-        date
+        let longest_date_str_len = 11;
+        let date_len = date.len() + (longest_date_str_len - uncolored_len);
+
+        (date, date_len)
+    }
+
+    fn present_desc(&self) -> String {
+        self.item.desc.clone()
     }
 
     fn present_tags(&self) -> String {
