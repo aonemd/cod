@@ -16,7 +16,10 @@ impl<'a> TodoPresenter<'a> {
         let separator_spacing = 4 as usize;
         let id_spacing = self.todo.last_id.to_string().len();
 
-        for item in &self.todo.items {
+        let mut items = self.todo.items.clone();
+        items.sort_by(|a, b| a.cmp(&b));
+
+        for item in &items {
             let presented_item = ItemPresenter::new(&item, separator_spacing, id_spacing).present();
 
             println!("{}", presented_item);
