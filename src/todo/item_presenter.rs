@@ -95,7 +95,7 @@ impl<'a> ItemPresenter<'a> {
                 t
             })
             .collect();
-        tags_augmented.join(" ")
+        tags_augmented.join(" ").blue().to_string()
     }
 }
 
