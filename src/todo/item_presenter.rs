@@ -1,6 +1,7 @@
 use super::item::Item;
 
 use chrono::Local;
+use colored::*;
 
 pub struct ItemPresenter<'a> {
     item: &'a Item,
@@ -18,15 +19,17 @@ impl<'a> ItemPresenter<'a> {
     }
 
     pub fn present(&self) -> String {
+        let (completed, completed_len) = self.present_completed();
+
         format!(
             "{:id_width$} {:completed_width$} {:date_width$} {} {}",
             self.present_id(),
-            self.present_completed(),
+            completed,
             self.present_date(),
             self.present_desc(),
             self.present_tags(),
             id_width = self.id_spacing + self.separator_spacing,
-            completed_width = 3 + self.separator_spacing,
+            completed_width = completed_len + self.separator_spacing,
             date_width = 11 + self.separator_spacing,
         )
     }
@@ -35,11 +38,11 @@ impl<'a> ItemPresenter<'a> {
         self.item.id.to_string()
     }
 
-    fn present_completed(&self) -> String {
+    fn present_completed(&self) -> (String, usize) {
         if self.item.completed {
-            "[X]".to_string()
+            ("[X]".to_string().green().to_string(), 12)
         } else {
-            "[ ]".to_string()
+            ("[ ]".to_string(), 3)
         }
     }
 
