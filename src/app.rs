@@ -6,7 +6,7 @@ use crate::TodoSerialized;
 use crate::YamlStore;
 
 pub fn run(cli: Cli) -> () {
-    let store = &YamlStore::new(None);
+    let store = &YamlStore::new(cli.file);
     let todo_serialized: TodoSerialized = *store.read();
 
     let mut todo = Todo::from(todo_serialized);
