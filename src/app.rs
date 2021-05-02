@@ -7,7 +7,10 @@ use crate::YamlStore;
 
 pub fn run(cli: Cli) -> () {
     let store = &YamlStore::new(cli.file);
-    let todo_serialized: TodoSerialized = *store.read();
+    let todo_serialized: TodoSerialized = match store.read() {
+        Ok(t) => *t,
+        Err(_) => TodoSerialized::default(),
+    };
 
     let mut todo = Todo::from(todo_serialized);
 

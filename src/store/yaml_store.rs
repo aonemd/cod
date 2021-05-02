@@ -1,5 +1,8 @@
 use super::store::Store;
 
+use std::fs::File;
+use std::path::Path;
+
 use serde_yaml;
 use serde::{ser, de};
 
@@ -13,18 +16,17 @@ impl YamlStore {
     pub fn new(source: Option<String>) -> Self {
         let file = source.unwrap_or(DEFAULT_FILE.to_string());
 
+        Self::create_file_if_not_exist(&file);
+
         Self {
             file,
         }
     }
 
-    pub fn read<T: de::DeserializeOwned>(&self) -> Box<T> {
+    pub fn read<T: de::DeserializeOwned>(&self) -> Result<Box<T>, Box<dyn std::error::Error>> {
         let data = std::fs::read_to_string(&self.file).unwrap();
 
-        match serde_yaml::from_str(&data) {
-            Ok(t) => t,
-            Err(e) => panic!("Error parsing file: {}", e),
-        }
+        return Ok(serde_yaml::from_str(&data)?);
     }
 
     pub fn write<T: ser::Serialize>(&self, data: &T) -> () {
@@ -35,6 +37,12 @@ impl YamlStore {
 
     pub fn get_source(&self) -> &str {
         &self.file
+    }
+
+    fn create_file_if_not_exist(file: &str) {
+        if !Path::new(file).exists()  {
+            File::create(file).unwrap();
+        }
     }
 }
 

@@ -10,6 +10,12 @@ use super::todo::Todo;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TodoSerialized(HashMap<NaiveDate, Vec<Item>>);
 
+impl Default for TodoSerialized {
+    fn default() -> Self {
+        Self(HashMap::new())
+    }
+}
+
 impl From<&Todo> for TodoSerialized {
     fn from(todo: &Todo) -> Self {
         let mut groups: HashMap<NaiveDate, Vec<Item>> = HashMap::new();
