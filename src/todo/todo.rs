@@ -2,7 +2,7 @@ use super::item::Item;
 use super::todo_serialized::TodoSerialized;
 use super::todo_presenter::TodoPresenter;
 
-use chrono::{NaiveDate};
+use chrono::{NaiveDate, Local};
 
 #[derive(Debug)]
 pub struct Todo {
@@ -36,10 +36,14 @@ impl Todo {
         presenter.present();
     }
 
-    pub fn add(&mut self, desc: String, date: NaiveDate, tags: Vec<String>) {
+    pub fn add(&mut self, desc: Option<String>, date: Option<NaiveDate>, tags: Option<Vec<String>>) {
         let next_id = self.get_next_id();
+        let desc = desc.expect("Item description cannot be empty!");
+        let date = date.unwrap_or(Local::today().naive_local());
+        let tags = tags.unwrap_or(vec![]);
         let completed = false;
         let new_item = Item::new(next_id, desc, date, tags, completed);
+
         self.items.push(new_item);
     }
 
@@ -85,7 +89,7 @@ mod tests {
     fn add_increments_items_length() {
         let mut todo = Todo::new();
 
-        todo.add(String::from("Hello, world!"), Local::today().naive_local(), vec![String::from("tag1")]);
+        todo.add(Some(String::from("Hello, world!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
 
         assert_eq!(todo.items.len(), 1);
     }
@@ -93,10 +97,10 @@ mod tests {
     #[test]
     fn add_increments_last_item_id() {
         let mut todo = Todo::new();
-        todo.add(String::from("Hello, world!"), Local::today().naive_local(), vec![String::from("tag1")]);
-        todo.add(String::from("Hello, world war II!"), Local::today().naive_local(), vec![String::from("tag1")]);
+        todo.add(Some(String::from("Hello, world!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
+        todo.add(Some(String::from("Hello, world war II!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
 
-        todo.add(String::from("Hello, world war III!"), Local::today().naive_local(), vec![String::from("tag1")]);
+        todo.add(Some(String::from("Hello, world war III!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
 
         assert_eq!(todo.items.last().unwrap().id, 3);
         assert_eq!(todo.items.len(), 3);
