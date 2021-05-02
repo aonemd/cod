@@ -24,6 +24,13 @@ pub fn run(cli: Cli) -> () {
             todo.add(parser.desc, parser.date, parser.tags);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
-        }
+        },
+        Command::Edit {id, content} => {
+            let parser = Parser::new(&content.join(" "));
+
+            todo.edit(id, parser.desc, parser.date, parser.tags);
+            let todo_serialized = TodoSerialized::from(&todo);
+            store.write(&todo_serialized);
+        },
     }
 }

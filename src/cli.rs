@@ -18,4 +18,9 @@ pub enum Command {
     Add {
         content: Vec<String>,
     },
+    #[structopt(name = "edit", visible_alias = "e")]
+    Edit {
+        id: u32,
+        content: Vec<String>,
+    },
 }

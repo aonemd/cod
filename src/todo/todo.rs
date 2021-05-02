@@ -47,6 +47,11 @@ impl Todo {
         self.items.push(new_item);
     }
 
+    pub fn edit(&mut self, id: u32, desc: Option<String>, date: Option<NaiveDate>, tags: Option<Vec<String>>) {
+        let item_to_edit = self.items.iter_mut().find(|item| item.id == id).expect(&format!("Cannot find item with id: {}", id));
+        item_to_edit.edit(desc, date, tags);
+    }
+
     fn get_next_id(&self) -> u32 {
         self.last_id() + 1
     }
