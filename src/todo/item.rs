@@ -39,6 +39,10 @@ impl Item {
             None => {}
         };
     }
+
+    pub fn toggle_completed(&mut self) -> () {
+        self.completed = !self.completed;
+    }
 }
 
 impl Ord for Item {

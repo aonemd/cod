@@ -32,5 +32,10 @@ pub fn run(cli: Cli) -> () {
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
         },
+        Command::Complete {ids} => {
+            todo.toggle_completed_batch(ids);
+            let todo_serialized = TodoSerialized::from(&todo);
+            store.write(&todo_serialized);
+        },
     }
 }

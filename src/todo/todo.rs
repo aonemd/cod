@@ -48,8 +48,15 @@ impl Todo {
     }
 
     pub fn edit(&mut self, id: u32, desc: Option<String>, date: Option<NaiveDate>, tags: Option<Vec<String>>) {
-        let item_to_edit = self.items.iter_mut().find(|item| item.id == id).expect(&format!("Cannot find item with id: {}", id));
+        let item_to_edit = self.find_item_by_id(id);
         item_to_edit.edit(desc, date, tags);
+    }
+
+    pub fn toggle_completed_batch(&mut self, ids: Vec<u32>) -> () {
+        for id in ids {
+            let item = self.find_item_by_id(id);
+            item.toggle_completed();
+        }
     }
 
     fn get_next_id(&self) -> u32 {
@@ -68,6 +75,10 @@ impl Todo {
         //
         // last_id
         largest_id(&self.items)
+    }
+
+    fn find_item_by_id(&mut self, id: u32) -> &mut Item {
+        self.items.iter_mut().find(|item| item.id == id).expect(&format!("Cannot find item with id: {}", id))
     }
 }
 

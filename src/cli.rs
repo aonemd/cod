@@ -23,4 +23,8 @@ pub enum Command {
         id: u32,
         content: Vec<String>,
     },
+    #[structopt(name = "complete", visible_alias = "c")]
+    Complete {
+        ids: Vec<u32>,
+    },
 }
