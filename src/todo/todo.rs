@@ -59,6 +59,10 @@ impl Todo {
         }
     }
 
+    pub fn delete_batch(&mut self, ids: Vec<u32>) -> () {
+        self.items.retain(|item| !ids.contains(&item.id));
+    }
+
     fn get_next_id(&self) -> u32 {
         self.get_last_id() + 1
     }

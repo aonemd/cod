@@ -37,5 +37,10 @@ pub fn run(cli: Cli) -> () {
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
         },
+        Command::Delete {ids} => {
+            todo.delete_batch(ids);
+            let todo_serialized = TodoSerialized::from(&todo);
+            store.write(&todo_serialized);
+        },
     }
 }

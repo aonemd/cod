@@ -27,4 +27,8 @@ pub enum Command {
     Complete {
         ids: Vec<u32>,
     },
+    #[structopt(name = "delete", visible_alias = "d")]
+    Delete {
+        ids: Vec<u32>,
+    },
 }
