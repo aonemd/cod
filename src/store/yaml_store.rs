@@ -6,15 +6,13 @@ use std::path::Path;
 use serde_yaml;
 use serde::{ser, de};
 
-const DEFAULT_FILE: &str = "todos.yml";
-
 pub struct YamlStore {
     file: String,
 }
 
 impl YamlStore {
     pub fn new(source: Option<String>) -> Self {
-        let file = source.unwrap_or(DEFAULT_FILE.to_string());
+        let file = source.unwrap_or(Self::default_source());
 
         Self::create_file_if_not_exist(&file);
 
@@ -44,28 +42,32 @@ impl YamlStore {
             File::create(file).unwrap();
         }
     }
+
+    fn default_source() -> String {
+        format!("{}/.todos.yml", std::env::var("HOME").unwrap())
+    }
 }
 
 #[cfg(test)]
-mod tests {
-    // use super::*;
+mod yaml_store_tests {
+    use super::*;
 
-    // #[test]
-    // fn init_with_passed_source() {
-    //     let yaml_store: YamlStore = YamlStore::new(Some("test.yml"));
-    //     assert_eq!(yaml_store.file, "test.yml");
-    // }
+    #[test]
+    fn init_with_passed_source() {
+        let yaml_store: YamlStore = YamlStore::new(Some("test.yml".to_string()));
+        assert_eq!(yaml_store.file, "test.yml");
+    }
 
-    //
-    // #[test]
-    // fn init_without_passed_source() {
-    //     let yaml_store: YamlStore = YamlStore::new(None);
-    //     assert_eq!(yaml_store.file, DEFAULT_FILE);
-    // }
-    //
-    // #[test]
-    // fn get_source() {
-    //     let yaml_store: YamlStore = YamlStore::new(Some("test.yml"));
-    //     assert_eq!(yaml_store.get_source(), String::from("test.yml"));
-    // }
+
+    #[test]
+    fn init_without_passed_source() {
+        let yaml_store: YamlStore = YamlStore::new(None);
+        assert_eq!(yaml_store.file, YamlStore::default_source());
+    }
+
+    #[test]
+    fn get_source() {
+        let yaml_store: YamlStore = YamlStore::new(Some("test.yml".to_string()));
+        assert_eq!(yaml_store.get_source(), String::from("test.yml"));
+    }
 }
