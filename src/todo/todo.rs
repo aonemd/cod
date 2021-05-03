@@ -13,7 +13,7 @@ pub struct Todo {
 impl From<TodoSerialized> for Todo {
     fn from(todo_serialized: TodoSerialized) -> Self {
         let items = todo_serialized.internal_map().values().cloned().flatten().collect();
-        let last_id = largest_id(&items);
+        let last_id = Self::get_largest_id(&items);
 
         Self {
             items,
@@ -60,39 +60,29 @@ impl Todo {
     }
 
     fn get_next_id(&self) -> u32 {
-        self.last_id() + 1
+        self.get_last_id() + 1
     }
 
-    fn last_id(&self) -> u32 {
-        // let last_id = match self.items.len() {
-        //     0 => 0,
-        //     _ => {
-        //         let mut sorted: Vec<u32> = self.items.iter().map(|item| item.id).collect();
-        //         sorted.sort_by(|a, b| a.cmp(&b));
-        //         *sorted.last().unwrap()
-        //     }
-        // };
-        //
-        // last_id
-        largest_id(&self.items)
+    fn get_last_id(&self) -> u32 {
+        Self::get_largest_id(&self.items)
+    }
+
+    fn get_largest_id(items: &Vec<Item>) -> u32 {
+        let last_id = match items.len() {
+            0 => 0,
+            _ => {
+                let mut sorted: Vec<u32> = items.iter().map(|item| item.id).collect();
+                sorted.sort_by(|a, b| a.cmp(&b));
+                *sorted.last().unwrap()
+            }
+        };
+
+        last_id
     }
 
     fn find_item_by_id(&mut self, id: u32) -> &mut Item {
         self.items.iter_mut().find(|item| item.id == id).expect(&format!("Cannot find item with id: {}", id))
     }
-}
-
-fn largest_id(items: &Vec<Item>) -> u32 {
-    let last_id = match items.len() {
-        0 => 0,
-        _ => {
-            let mut sorted: Vec<u32> = items.iter().map(|item| item.id).collect();
-            sorted.sort_by(|a, b| a.cmp(&b));
-            *sorted.last().unwrap()
-        }
-    };
-
-    last_id
 }
 
 #[cfg(test)]
