@@ -3,7 +3,7 @@
     cod
   </h1>
 
-  The command line todo app.
+  The command line todo app
 </div>
 
 ## Installation
