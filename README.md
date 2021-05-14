@@ -8,7 +8,7 @@
 
 ## Installation
 
-### From pre-build binaries
+### From pre-built binaries
 
 Currently, there's one pre-built binary for Linux under
 [releases page](https://github.com/aonemd/cod/releases).
