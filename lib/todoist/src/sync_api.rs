@@ -1,3 +1,5 @@
+use super::types::Payload;
+
 pub struct SyncApi {
     token: String,
     uri: String,
@@ -11,7 +13,7 @@ impl SyncApi {
         }
     }
 
-    pub async fn read_resources(self) -> Result<serde_json::Value, reqwest::Error>  {
+    pub async fn read_resources(self) -> Result<Payload, Box<dyn std::error::Error>>  {
             let client = reqwest::Client::new();
 
             let res = client
@@ -20,11 +22,15 @@ impl SyncApi {
                 .header(reqwest::header::ACCEPT, "application/json")
                 .header(reqwest::header::CONTENT_TYPE, "application/json")
                 .send()
-                .await?
-                .json::<serde_json::Value>()
                 .await?;
 
-        Ok(res)
+        let body = res
+            .json::<serde_json::Value>()
+            .await?;
+
+        let payload: Payload = serde_json::from_value(body)?;
+
+        Ok(payload)
     }
 }
 
