@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Payload {
-    items: Vec<Item>,
-    projects: Vec<Project>,
-    labels: Vec<Label>,
+    items: Option<Vec<Item>>,
+    projects: Option<Vec<Project>>,
+    labels: Option<Vec<Label>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

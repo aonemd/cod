@@ -1,5 +1,7 @@
 use super::types::Payload;
 
+use serde_json::json;
+
 pub struct SyncApi {
     token: String,
     uri: String,
@@ -13,7 +15,12 @@ impl SyncApi {
         }
     }
 
-    pub async fn read_resources(self) -> Result<Payload, Box<dyn std::error::Error>> {
+    pub async fn read_resources(
+        self,
+        resource_types: Option<Vec<&str>>,
+    ) -> Result<Payload, Box<dyn std::error::Error>> {
+        let resource_types = resource_types.unwrap_or(vec!["all"]);
+
         let client = reqwest::Client::new();
 
         let res = client
@@ -21,7 +28,7 @@ impl SyncApi {
             .query(&[
                 ("token", self.token),
                 ("sync_token", "*".to_string()),
-                ("resource_types", "[\"all\"]".to_string()),
+                ("resource_types", json!(resource_types).to_string()),
             ])
             .header(reqwest::header::ACCEPT, "application/json")
             .header(reqwest::header::CONTENT_TYPE, "application/json")
