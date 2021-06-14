@@ -1,4 +1,4 @@
-use super::types::Payload;
+use super::types::{Payload, WriteCommands};
 
 use serde_json::json;
 
@@ -37,6 +37,31 @@ impl SyncApi {
 
         let body = res.json::<serde_json::Value>().await?;
 
+        let payload: Payload = serde_json::from_value(body)?;
+
+        Ok(payload)
+    }
+
+    pub async fn write_resources(
+        &self,
+        commands: WriteCommands,
+    ) -> Result<Payload, Box<dyn std::error::Error>> {
+        let client = reqwest::Client::new();
+
+        let res = client
+            .get(&self.uri)
+            .query(&[
+                ("token", &self.token),
+                ("sync_token", &"*".to_string()),
+                ("commands", &json!(commands).to_string()),
+            ])
+            .header(reqwest::header::ACCEPT, "application/json")
+            .header(reqwest::header::CONTENT_TYPE, "application/json")
+            .send()
+            .await?;
+
+        let body = res.json::<serde_json::Value>().await?;
+        println!("{:#?}", body);
         let payload: Payload = serde_json::from_value(body)?;
 
         Ok(payload)
