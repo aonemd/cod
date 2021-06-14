@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -42,4 +44,15 @@ pub struct Label {
     name: String,
     is_deleted: u8,
     is_favorite: u8,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WriteCommands(pub Vec<WriteCommand>);
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WriteCommand {
+    pub r#type: String,
+    pub args: HashMap<String, String>,
+    pub uuid: String,
+    pub temp_id: String,
 }
