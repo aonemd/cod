@@ -13,27 +13,28 @@ impl SyncApi {
         }
     }
 
-    pub async fn read_resources(self) -> Result<Payload, Box<dyn std::error::Error>>  {
-            let client = reqwest::Client::new();
+    pub async fn read_resources(self) -> Result<Payload, Box<dyn std::error::Error>> {
+        let client = reqwest::Client::new();
 
-            let res = client
-                .get(self.uri)
-                .query(&[("token", self.token), ("sync_token", "*".to_string()), ("resource_types", "[\"all\"]".to_string())])
-                .header(reqwest::header::ACCEPT, "application/json")
-                .header(reqwest::header::CONTENT_TYPE, "application/json")
-                .send()
-                .await?;
-
-        let body = res
-            .json::<serde_json::Value>()
+        let res = client
+            .get(self.uri)
+            .query(&[
+                ("token", self.token),
+                ("sync_token", "*".to_string()),
+                ("resource_types", "[\"all\"]".to_string()),
+            ])
+            .header(reqwest::header::ACCEPT, "application/json")
+            .header(reqwest::header::CONTENT_TYPE, "application/json")
+            .send()
             .await?;
+
+        let body = res.json::<serde_json::Value>().await?;
 
         let payload: Payload = serde_json::from_value(body)?;
 
         Ok(payload)
     }
 }
-
 
 #[cfg(test)]
 mod todoist_sync_api_tests {
