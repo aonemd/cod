@@ -23,7 +23,12 @@ impl Item {
         }
     }
 
-    pub fn edit(&mut self, desc: Option<String>, date: Option<NaiveDate>, tags: Option<Vec<String>>) -> () {
+    pub fn edit(
+        &mut self,
+        desc: Option<String>,
+        date: Option<NaiveDate>,
+        tags: Option<Vec<String>>,
+    ) -> () {
         match desc {
             Some(d) => self.desc = d,
             None => {}
@@ -67,18 +72,28 @@ impl PartialEq for Item {
 mod item_tests {
     use super::*;
 
-    use chrono::{Local};
+    use chrono::Local;
 
     #[test]
     fn test_edit() -> () {
         let today = Local::today().naive_local();
-        let mut item = Item::new(1, "Hello".to_string(), today, vec!["work".to_string()], false);
+        let mut item = Item::new(
+            1,
+            "Hello".to_string(),
+            today,
+            vec!["work".to_string()],
+            false,
+        );
 
         let expected_desc = String::from("Hello, world!");
         let expected_date = today.pred();
         let expected_tags = vec!["work".to_string(), "personal".to_string()];
 
-        item.edit(Some(expected_desc.clone()), Some(expected_date.clone()), Some(vec!["personal".to_string()]));
+        item.edit(
+            Some(expected_desc.clone()),
+            Some(expected_date.clone()),
+            Some(vec!["personal".to_string()]),
+        );
 
         assert_eq!(item.desc, expected_desc);
         assert_eq!(item.date, expected_date);
@@ -88,7 +103,13 @@ mod item_tests {
     #[test]
     fn test_edit_desc_only() -> () {
         let today = Local::today().naive_local();
-        let mut item = Item::new(1, "Hello".to_string(), today, vec!["work".to_string()], false);
+        let mut item = Item::new(
+            1,
+            "Hello".to_string(),
+            today,
+            vec!["work".to_string()],
+            false,
+        );
 
         let expected_desc = String::from("Hello, world!");
         let expected_date = today;
@@ -104,7 +125,13 @@ mod item_tests {
     #[test]
     fn test_edit_date_only() -> () {
         let today = Local::today().naive_local();
-        let mut item = Item::new(1, "Hello".to_string(), today, vec!["work".to_string()], false);
+        let mut item = Item::new(
+            1,
+            "Hello".to_string(),
+            today,
+            vec!["work".to_string()],
+            false,
+        );
 
         let expected_desc = String::from("Hello");
         let expected_date = today.succ();
@@ -117,11 +144,16 @@ mod item_tests {
         assert_eq!(item.tags, expected_tags);
     }
 
-
     #[test]
     fn test_edit_tags_only_appends_to_existing_tags() -> () {
         let today = Local::today().naive_local();
-        let mut item = Item::new(1, "Hello".to_string(), today, vec!["work".to_string()], false);
+        let mut item = Item::new(
+            1,
+            "Hello".to_string(),
+            today,
+            vec!["work".to_string()],
+            false,
+        );
 
         let expected_desc = String::from("Hello");
         let expected_date = today;

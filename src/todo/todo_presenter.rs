@@ -1,5 +1,5 @@
-use super::todo::Todo;
 use super::item_presenter::ItemPresenter;
+use super::todo::Todo;
 
 pub struct TodoPresenter<'a> {
     todo: &'a Todo,
@@ -7,9 +7,7 @@ pub struct TodoPresenter<'a> {
 
 impl<'a> TodoPresenter<'a> {
     pub fn new(todo: &'a Todo) -> Self {
-        Self {
-            todo,
-        }
+        Self { todo }
     }
 
     pub fn present(&self) -> () {

@@ -57,22 +57,22 @@ impl<'a> ItemPresenter<'a> {
                 let mut date_str = String::from("@");
                 date_str.push_str("Yesterday");
                 (date_str.magenta().to_string(), date_str.len())
-            },
+            }
             a if a == _today => {
                 let mut date_str = String::from("@");
                 date_str.push_str("Today");
                 (date_str.bold().cyan().to_string(), date_str.len())
-            },
+            }
             a if a == _tomorrow => {
                 let mut date_str = String::from("@");
                 date_str.push_str("Tomorrow");
                 (date_str.cyan().to_string(), date_str.len())
-            },
+            }
             _ => {
                 let mut date_str = String::from("@");
                 date_str.push_str(&self.item.date.to_string());
                 (date_str.cyan().to_string(), date_str.len())
-            },
+            }
         };
 
         let longest_date_str_len = 11;

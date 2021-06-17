@@ -3,8 +3,8 @@ use super::store::Store;
 use std::fs::File;
 use std::path::Path;
 
+use serde::{de, ser};
 use serde_yaml;
-use serde::{ser, de};
 
 pub struct YamlStore {
     file: String,
@@ -16,9 +16,7 @@ impl YamlStore {
 
         Self::create_file_if_not_exist(&file);
 
-        Self {
-            file,
-        }
+        Self { file }
     }
 
     pub fn read<T: de::DeserializeOwned>(&self) -> Result<Box<T>, Box<dyn std::error::Error>> {
@@ -38,7 +36,7 @@ impl YamlStore {
     }
 
     fn create_file_if_not_exist(file: &str) {
-        if !Path::new(file).exists()  {
+        if !Path::new(file).exists() {
             File::create(file).unwrap();
         }
     }
@@ -57,7 +55,6 @@ mod yaml_store_tests {
         let yaml_store: YamlStore = YamlStore::new(Some("test.yml".to_string()));
         assert_eq!(yaml_store.file, "test.yml");
     }
-
 
     #[test]
     fn init_without_passed_source() {

@@ -18,26 +18,17 @@ pub enum Command {
 
     /// Add an item. Date starts with a `@`. Tags start with a `+`
     #[structopt(name = "add", visible_alias = "a")]
-    Add {
-        content: Vec<String>,
-    },
+    Add { content: Vec<String> },
 
     /// Edit an item. Attributes not passed will not be changed
     #[structopt(name = "edit", visible_alias = "e")]
-    Edit {
-        id: u32,
-        content: Vec<String>,
-    },
+    Edit { id: u32, content: Vec<String> },
 
     /// Toggle completed status of one or more items using their ids
     #[structopt(name = "complete", visible_alias = "c")]
-    Complete {
-        ids: Vec<u32>,
-    },
+    Complete { ids: Vec<u32> },
 
     /// Delete one or more items using their ids
     #[structopt(name = "delete", visible_alias = "d")]
-    Delete {
-        ids: Vec<u32>,
-    },
+    Delete { ids: Vec<u32> },
 }
