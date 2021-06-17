@@ -17,30 +17,30 @@ pub async fn run(cli: Cli) -> () {
     match cli.command {
         Command::List => {
             todo.list();
-        },
-        Command::Add {content} => {
+        }
+        Command::Add { content } => {
             let parser = Parser::new(&content.join(" "));
 
             todo.add(parser.desc, parser.date, parser.tags);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
-        },
-        Command::Edit {id, content} => {
+        }
+        Command::Edit { id, content } => {
             let parser = Parser::new(&content.join(" "));
 
             todo.edit(id, parser.desc, parser.date, parser.tags);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
-        },
-        Command::Complete {ids} => {
+        }
+        Command::Complete { ids } => {
             todo.toggle_completed_batch(ids);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
-        },
-        Command::Delete {ids} => {
+        }
+        Command::Delete { ids } => {
             todo.delete_batch(ids);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
-        },
+        }
     }
 }

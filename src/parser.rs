@@ -1,4 +1,4 @@
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 use date_time_parser::DateParser;
 use regex::Regex;
 
@@ -17,11 +17,7 @@ impl Parser {
         let date = Self::parse_date(input);
         let tags = Self::parse_tags(input);
 
-        Self {
-            desc,
-            date,
-            tags,
-        }
+        Self { desc, date, tags }
     }
 
     fn parse_desc(input: &str) -> Option<String> {
@@ -45,7 +41,7 @@ impl Parser {
                 match NaiveDate::parse_from_str(&date[0][1..], "%Y-%m-%d") {
                     Ok(d) => Some(d),
                     _ => None,
-                }
+                },
             )
         } else {
             None
@@ -71,7 +67,7 @@ impl Parser {
 mod parser_tests {
     use super::*;
 
-    use chrono::{Local};
+    use chrono::Local;
 
     #[test]
     fn test_parse_desc() -> () {

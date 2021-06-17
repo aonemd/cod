@@ -1,8 +1,8 @@
 use super::item::Item;
-use super::todo_serialized::TodoSerialized;
 use super::todo_presenter::TodoPresenter;
+use super::todo_serialized::TodoSerialized;
 
-use chrono::{NaiveDate, Local};
+use chrono::{Local, NaiveDate};
 
 #[derive(Debug)]
 pub struct Todo {
@@ -12,13 +12,15 @@ pub struct Todo {
 
 impl From<TodoSerialized> for Todo {
     fn from(todo_serialized: TodoSerialized) -> Self {
-        let items = todo_serialized.internal_map().values().cloned().flatten().collect();
+        let items = todo_serialized
+            .internal_map()
+            .values()
+            .cloned()
+            .flatten()
+            .collect();
         let last_id = Self::get_largest_id(&items);
 
-        Self {
-            items,
-            last_id,
-        }
+        Self { items, last_id }
     }
 }
 
@@ -36,7 +38,12 @@ impl Todo {
         presenter.present();
     }
 
-    pub fn add(&mut self, desc: Option<String>, date: Option<NaiveDate>, tags: Option<Vec<String>>) {
+    pub fn add(
+        &mut self,
+        desc: Option<String>,
+        date: Option<NaiveDate>,
+        tags: Option<Vec<String>>,
+    ) {
         let next_id = self.get_next_id();
         let desc = desc.expect("Item description cannot be empty!");
         let date = date.unwrap_or(Local::today().naive_local());
@@ -47,7 +54,13 @@ impl Todo {
         self.items.push(new_item);
     }
 
-    pub fn edit(&mut self, id: u32, desc: Option<String>, date: Option<NaiveDate>, tags: Option<Vec<String>>) {
+    pub fn edit(
+        &mut self,
+        id: u32,
+        desc: Option<String>,
+        date: Option<NaiveDate>,
+        tags: Option<Vec<String>>,
+    ) {
         let item_to_edit = self.find_item_by_id(id);
         item_to_edit.edit(desc, date, tags);
     }
@@ -85,7 +98,10 @@ impl Todo {
     }
 
     fn find_item_by_id(&mut self, id: u32) -> &mut Item {
-        self.items.iter_mut().find(|item| item.id == id).expect(&format!("Cannot find item with id: {}", id))
+        self.items
+            .iter_mut()
+            .find(|item| item.id == id)
+            .expect(&format!("Cannot find item with id: {}", id))
     }
 }
 
@@ -93,13 +109,17 @@ impl Todo {
 mod tests {
     use super::*;
 
-    use chrono::{Local};
+    use chrono::Local;
 
     #[test]
     fn add_increments_items_length() {
         let mut todo = Todo::new();
 
-        todo.add(Some(String::from("Hello, world!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
+        todo.add(
+            Some(String::from("Hello, world!")),
+            Some(Local::today().naive_local()),
+            Some(vec![String::from("tag1")]),
+        );
 
         assert_eq!(todo.items.len(), 1);
     }
@@ -107,10 +127,22 @@ mod tests {
     #[test]
     fn add_increments_last_item_id() {
         let mut todo = Todo::new();
-        todo.add(Some(String::from("Hello, world!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
-        todo.add(Some(String::from("Hello, world war II!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
+        todo.add(
+            Some(String::from("Hello, world!")),
+            Some(Local::today().naive_local()),
+            Some(vec![String::from("tag1")]),
+        );
+        todo.add(
+            Some(String::from("Hello, world war II!")),
+            Some(Local::today().naive_local()),
+            Some(vec![String::from("tag1")]),
+        );
 
-        todo.add(Some(String::from("Hello, world war III!")), Some(Local::today().naive_local()), Some(vec![String::from("tag1")]));
+        todo.add(
+            Some(String::from("Hello, world war III!")),
+            Some(Local::today().naive_local()),
+            Some(vec![String::from("tag1")]),
+        );
 
         assert_eq!(todo.items.last().unwrap().id, 3);
         assert_eq!(todo.items.len(), 3);
