@@ -3,5 +3,4 @@ mod todoist;
 pub mod types;
 
 pub use crate::sync_api::SyncApi;
-pub use crate::todoist::Todoist;
 pub use crate::types::*;
