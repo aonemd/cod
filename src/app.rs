@@ -5,7 +5,7 @@ use crate::Todo;
 use crate::TodoSerialized;
 use crate::YamlStore;
 
-pub fn run(cli: Cli) -> () {
+pub async fn run(cli: Cli) -> () {
     let store = &YamlStore::new(cli.file);
     let todo_serialized: TodoSerialized = match store.read() {
         Ok(t) => *t,
