@@ -14,8 +14,13 @@ use app::run;
 
 use structopt::StructOpt;
 
-fn main() {
+extern crate todoist;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::from_args();
 
-    run(cli);
+    run(cli).await;
+
+    Ok(())
 }
