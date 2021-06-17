@@ -5,6 +5,7 @@ use serde_json::json;
 pub struct SyncApi {
     token: String,
     uri: String,
+    http_client: reqwest::Client,
 }
 
 impl SyncApi {
@@ -12,6 +13,7 @@ impl SyncApi {
         Self {
             token,
             uri: format!("{}/sync", super::todoist::BASE_URI),
+            http_client: reqwest::Client::new(),
         }
     }
 
@@ -21,9 +23,8 @@ impl SyncApi {
     ) -> Result<Payload, Box<dyn std::error::Error>> {
         let resource_types = resource_types.unwrap_or(vec!["all"]);
 
-        let client = reqwest::Client::new();
-
-        let res = client
+        let res = self
+            .http_client
             .get(&self.uri)
             .query(&[
                 ("token", &self.token),
@@ -45,9 +46,8 @@ impl SyncApi {
         &self,
         commands: WriteCommands,
     ) -> Result<Payload, Box<dyn std::error::Error>> {
-        let client = reqwest::Client::new();
-
-        let res = client
+        let res = self
+            .http_client
             .get(&self.uri)
             .query(&[
                 ("token", &self.token),
