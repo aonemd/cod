@@ -16,7 +16,7 @@ impl SyncApi {
     }
 
     pub async fn read_resources(
-        self,
+        &self,
         resource_types: Option<Vec<&str>>,
     ) -> Result<Payload, Box<dyn std::error::Error>> {
         let resource_types = resource_types.unwrap_or(vec!["all"]);
@@ -24,11 +24,11 @@ impl SyncApi {
         let client = reqwest::Client::new();
 
         let res = client
-            .get(self.uri)
+            .get(&self.uri)
             .query(&[
-                ("token", self.token),
-                ("sync_token", "*".to_string()),
-                ("resource_types", json!(resource_types).to_string()),
+                ("token", &self.token),
+                ("sync_token", &"*".to_string()),
+                ("resource_types", &json!(resource_types).to_string()),
             ])
             .header(reqwest::header::ACCEPT, "application/json")
             .header(reqwest::header::CONTENT_TYPE, "application/json")
@@ -36,7 +36,6 @@ impl SyncApi {
             .await?;
 
         let body = res.json::<serde_json::Value>().await?;
-
         let payload: Payload = serde_json::from_value(body)?;
 
         Ok(payload)
