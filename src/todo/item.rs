@@ -10,16 +10,25 @@ pub struct Item {
     pub date: NaiveDate,
     pub tags: Vec<String>,
     pub completed: bool,
+    pub uid: i64,
 }
 
 impl Item {
-    pub fn new(id: u32, desc: String, date: NaiveDate, tags: Vec<String>, completed: bool) -> Self {
+    pub fn new(
+        id: u32,
+        desc: String,
+        date: NaiveDate,
+        tags: Vec<String>,
+        completed: bool,
+        uid: i64,
+    ) -> Self {
         Self {
             id,
             desc,
             date,
             tags,
             completed,
+            uid,
         }
     }
 
@@ -83,6 +92,7 @@ mod item_tests {
             today,
             vec!["work".to_string()],
             false,
+            None,
         );
 
         let expected_desc = String::from("Hello, world!");
@@ -109,6 +119,7 @@ mod item_tests {
             today,
             vec!["work".to_string()],
             false,
+            None,
         );
 
         let expected_desc = String::from("Hello, world!");
@@ -131,6 +142,7 @@ mod item_tests {
             today,
             vec!["work".to_string()],
             false,
+            None,
         );
 
         let expected_desc = String::from("Hello");
@@ -153,6 +165,7 @@ mod item_tests {
             today,
             vec!["work".to_string()],
             false,
+            None,
         );
 
         let expected_desc = String::from("Hello");

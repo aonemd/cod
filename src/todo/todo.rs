@@ -43,13 +43,15 @@ impl Todo {
         desc: Option<String>,
         date: Option<NaiveDate>,
         tags: Option<Vec<String>>,
+        uid: Option<i64>,
     ) {
         let next_id = self.get_next_id();
         let desc = desc.expect("Item description cannot be empty!");
         let date = date.unwrap_or(Local::today().naive_local());
         let tags = tags.unwrap_or(vec![]);
         let completed = false;
-        let new_item = Item::new(next_id, desc, date, tags, completed);
+        let uid = uid.unwrap_or(0);
+        let new_item = Item::new(next_id, desc, date, tags, completed, uid);
 
         self.items.push(new_item);
     }
@@ -119,6 +121,7 @@ mod tests {
             Some(String::from("Hello, world!")),
             Some(Local::today().naive_local()),
             Some(vec![String::from("tag1")]),
+            None,
         );
 
         assert_eq!(todo.items.len(), 1);
@@ -131,17 +134,20 @@ mod tests {
             Some(String::from("Hello, world!")),
             Some(Local::today().naive_local()),
             Some(vec![String::from("tag1")]),
+            None,
         );
         todo.add(
             Some(String::from("Hello, world war II!")),
             Some(Local::today().naive_local()),
             Some(vec![String::from("tag1")]),
+            None,
         );
 
         todo.add(
             Some(String::from("Hello, world war III!")),
             Some(Local::today().naive_local()),
             Some(vec![String::from("tag1")]),
+            None,
         );
 
         assert_eq!(todo.items.last().unwrap().id, 3);

@@ -113,6 +113,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1")],
             false,
+            0,
         );
         let item_presenter = ItemPresenter::new(&item, 2, 1);
 
@@ -127,6 +128,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1")],
             false,
+            0,
         );
         let item_presenter = ItemPresenter::new(&item, 2, 1);
 
@@ -141,6 +143,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1")],
             false,
+            0,
         );
         let item_presenter = ItemPresenter::new(&item, 2, 1);
 
@@ -156,6 +159,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1"), String::from("tag2")],
             false,
+            0,
         );
         let item_presenter = ItemPresenter::new(&item, 2, 1);
 
@@ -171,6 +175,7 @@ mod tests {
             Local::today().naive_local(),
             vec![String::from("tag1"), String::from("tag2")],
             true,
+            0,
         );
         let item_presenter = ItemPresenter::new(&item, 2, 1);
 
