@@ -1,3 +1,4 @@
+use crate::synchronizer;
 use crate::Cli;
 use crate::Command;
 use crate::Config;
@@ -19,6 +20,9 @@ pub async fn run(cli: Cli) -> () {
 
     match cli.command {
         Command::List => {
+            if let Some(token) = config.todoist_token {
+                synchronizer::todoist::sync_down(&mut todo, token).await;
+            }
             todo.list();
         }
         Command::Add { content } => {

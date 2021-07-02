@@ -3,6 +3,7 @@ mod cli;
 mod config;
 mod parser;
 mod store;
+mod synchronizer;
 mod todo;
 
 use app::run;
