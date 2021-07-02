@@ -1,16 +1,19 @@
-mod cli;
 mod app;
+mod cli;
+mod config;
 mod parser;
 mod store;
 mod todo;
 
+use app::run;
 pub use cli::Cli;
 pub use cli::Command;
+pub use config::Config;
 pub use parser::Parser;
+pub use store::yaml_store::YamlStore;
+pub use synchronizer::todoist::*;
 pub use todo::todo::Todo;
 pub use todo::todo_serialized::TodoSerialized;
-pub use store::yaml_store::YamlStore;
-use app::run;
 
 use structopt::StructOpt;
 
