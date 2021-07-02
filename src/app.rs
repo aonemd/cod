@@ -1,5 +1,6 @@
 use crate::Cli;
 use crate::Command;
+use crate::Config;
 use crate::Parser;
 use crate::Todo;
 use crate::TodoSerialized;
@@ -11,6 +12,8 @@ pub async fn run(cli: Cli) -> () {
         Ok(t) => *t,
         Err(_) => TodoSerialized::default(),
     };
+
+    let config = Config::new();
 
     let mut todo = Todo::from(todo_serialized);
 
