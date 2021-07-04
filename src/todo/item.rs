@@ -49,7 +49,13 @@ impl Item {
         };
 
         match tags {
-            Some(mut t) => self.tags.append(&mut t),
+            Some(mut t) => {
+                for tag in t.into_iter() {
+                    if !self.tags.contains(&tag) {
+                        self.tags.push(tag);
+                    }
+                }
+            }
             None => {}
         };
     }
