@@ -22,7 +22,11 @@ pub async fn run(cli: Cli) -> () {
         Command::List => {
             if let Some(token) = config.todoist_token {
                 synchronizer::todoist::sync_down(&mut todo, token).await;
+
+                let todo_serialized = TodoSerialized::from(&todo);
+                store.write(&todo_serialized);
             }
+
             todo.list();
         }
         Command::Add { content } => {
