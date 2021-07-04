@@ -38,6 +38,20 @@ impl Todo {
         presenter.present();
     }
 
+    pub fn edit_or_add(
+        &mut self,
+        desc: Option<String>,
+        date: Option<NaiveDate>,
+        tags: Option<Vec<String>>,
+        uid: Option<i64>,
+    ) -> () {
+        if let Some(original_item) = self.items.iter().find(|i| i.uid == uid.unwrap()) {
+            self.edit(original_item.id, desc, date, tags);
+        } else {
+            self.add(desc, date, tags, uid);
+        }
+    }
+
     pub fn add(
         &mut self,
         desc: Option<String>,
