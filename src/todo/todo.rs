@@ -96,6 +96,18 @@ impl Todo {
         self.items.retain(|item| !ids.contains(&item.id));
     }
 
+    pub fn delete_batch_by_uids(&mut self, uids: Vec<i64>) -> () {
+        self.items.retain(|item| !uids.contains(&item.uid));
+    }
+
+    pub fn find_items_uid_by_source(&mut self, source: ItemSource) -> Vec<i64> {
+        self.items
+            .iter_mut()
+            .filter(|_item| _item.item_source == source)
+            .map(|_item| _item.uid)
+            .collect()
+    }
+
     fn get_next_id(&self) -> u32 {
         self.get_last_id() + 1
     }
