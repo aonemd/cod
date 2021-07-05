@@ -1,4 +1,5 @@
 use super::item::Item;
+use super::item_source::ItemSource;
 use super::todo_presenter::TodoPresenter;
 use super::todo_serialized::TodoSerialized;
 
@@ -44,11 +45,12 @@ impl Todo {
         date: Option<NaiveDate>,
         tags: Option<Vec<String>>,
         uid: Option<i64>,
+        item_source: Option<ItemSource>,
     ) -> () {
         if let Some(original_item) = self.items.iter().find(|i| i.uid == uid.unwrap()) {
             self.edit(original_item.id, desc, date, tags);
         } else {
-            self.add(desc, date, tags, uid);
+            self.add(desc, date, tags, uid, item_source);
         }
     }
 
@@ -58,6 +60,7 @@ impl Todo {
         date: Option<NaiveDate>,
         tags: Option<Vec<String>>,
         uid: Option<i64>,
+        item_source: Option<ItemSource>,
     ) {
         let next_id = self.get_next_id();
         let desc = desc.expect("Item description cannot be empty!");
@@ -65,7 +68,8 @@ impl Todo {
         let tags = tags.unwrap_or(vec![]);
         let completed = false;
         let uid = uid.unwrap_or(0);
-        let new_item = Item::new(next_id, desc, date, tags, completed, uid);
+        let item_source = item_source.unwrap_or(ItemSource::Local);
+        let new_item = Item::new(next_id, desc, date, tags, completed, uid, item_source);
 
         self.items.push(new_item);
     }

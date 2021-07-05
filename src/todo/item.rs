@@ -1,3 +1,5 @@
+use super::item_source::ItemSource;
+
 use std::cmp::Ordering;
 
 use chrono::NaiveDate;
@@ -11,6 +13,7 @@ pub struct Item {
     pub tags: Vec<String>,
     pub completed: bool,
     pub uid: i64,
+    pub item_source: ItemSource,
 }
 
 impl Item {
@@ -21,6 +24,7 @@ impl Item {
         tags: Vec<String>,
         completed: bool,
         uid: i64,
+        item_source: ItemSource,
     ) -> Self {
         Self {
             id,
@@ -29,6 +33,7 @@ impl Item {
             tags,
             completed,
             uid,
+            item_source,
         }
     }
 
