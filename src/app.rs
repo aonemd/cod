@@ -32,7 +32,7 @@ pub async fn run(cli: Cli) -> () {
         Command::Add { content } => {
             let parser = Parser::new(&content.join(" "));
 
-            todo.add(parser.desc, parser.date, parser.tags, Some(0));
+            todo.add(parser.desc, parser.date, parser.tags, Some(0), None);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
         }
