@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -52,7 +50,7 @@ pub struct WriteCommands(pub Vec<WriteCommand>);
 #[derive(Debug, Serialize, Deserialize)]
 pub struct WriteCommand {
     pub r#type: String,
-    pub args: HashMap<String, String>,
+    pub args: serde_json::Value,
     pub uuid: String,
     pub temp_id: String,
 }
