@@ -1,4 +1,4 @@
-mod item;
+pub mod item;
 mod item_presenter;
 pub mod item_source;
 pub mod todo;

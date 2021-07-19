@@ -61,7 +61,7 @@ impl Todo {
         tags: Option<Vec<String>>,
         uid: Option<i64>,
         item_source: Option<ItemSource>,
-    ) {
+    ) -> u32 {
         let next_id = self.get_next_id();
         let desc = desc.expect("Item description cannot be empty!");
         let date = date.unwrap_or(Local::today().naive_local());
@@ -72,6 +72,8 @@ impl Todo {
         let new_item = Item::new(next_id, desc, date, tags, completed, uid, item_source);
 
         self.items.push(new_item);
+
+        next_id
     }
 
     pub fn edit(
@@ -108,6 +110,13 @@ impl Todo {
             .collect()
     }
 
+    pub fn find_item_by_id(&mut self, id: u32) -> &mut Item {
+        self.items
+            .iter_mut()
+            .find(|item| item.id == id)
+            .expect(&format!("Cannot find item with id: {}", id))
+    }
+
     fn get_next_id(&self) -> u32 {
         self.get_last_id() + 1
     }
@@ -127,13 +136,6 @@ impl Todo {
         };
 
         last_id
-    }
-
-    fn find_item_by_id(&mut self, id: u32) -> &mut Item {
-        self.items
-            .iter_mut()
-            .find(|item| item.id == id)
-            .expect(&format!("Cannot find item with id: {}", id))
     }
 }
 
