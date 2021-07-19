@@ -13,6 +13,7 @@ pub use config::Config;
 pub use parser::Parser;
 pub use store::yaml_store::YamlStore;
 pub use synchronizer::todoist::*;
+pub use todo::item::Item;
 pub use todo::item_source::ItemSource;
 pub use todo::todo::Todo;
 pub use todo::todo_serialized::TodoSerialized;

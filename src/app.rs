@@ -32,9 +32,19 @@ pub async fn run(cli: Cli) -> () {
         Command::Add { content } => {
             let parser = Parser::new(&content.join(" "));
 
-            todo.add(parser.desc, parser.date, parser.tags, Some(0), None);
+            let item_id = todo.add(parser.desc, parser.date, parser.tags, Some(0), None);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
+
+            if let Some(token) = config.todoist_token {
+                synchronizer::todoist::sync_up(
+                    &mut todo,
+                    vec![item_id],
+                    synchronizer::todoist::SyncUpOp::ItemAdd,
+                    token,
+                )
+                .await;
+            }
         }
         Command::Edit { id, content } => {
             let parser = Parser::new(&content.join(" "));

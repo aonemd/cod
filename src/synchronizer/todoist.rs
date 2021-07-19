@@ -1,24 +1,11 @@
-// use std::collections::HashMap;
-// let client = todoist::SyncApi::new("73d28ef601726f56fba0b52e5ca7d61f0caa6e0b".to_string());
-// println!("{:#?}", client.read_resources(None).await);
-//
-// let mut item: HashMap<String, String> = HashMap::new();
-// item.insert("content".to_string(), "test rust!!!".to_string());
-// let command = todoist::types::WriteCommand {
-//     r#type: "item_add".to_string(),
-//     args: item,
-//     uuid: "381e601f-0ef3-4ed6-bf95-58f896d1a314".to_string(),
-//     temp_id: "381e601f-0ef3-4ed6-bf95-58f896d1a314".to_string(),
-// };
-// let commands = todoist::types::WriteCommands(vec![command]);
-// println!("{:#?}", client.write_resources(commands).await);
-
 use crate::ItemSource;
 use crate::Todo;
 
 use std::collections::HashMap;
 
 use chrono::NaiveDate;
+use serde_json::json;
+use uuid::Uuid;
 
 pub async fn sync_down(todo: &mut Todo, token: String) -> () {
     let client = todoist::SyncApi::new(token);
@@ -57,4 +44,46 @@ pub async fn sync_down(todo: &mut Todo, token: String) -> () {
         .collect();
 
     todo.delete_batch_by_uids(item_uids_to_delete);
+}
+
+pub enum SyncUpOp {
+    ItemAdd,
+}
+
+pub async fn sync_up(todo: &mut Todo, ids: Vec<u32>, op: SyncUpOp, token: String) -> () {
+    let client = todoist::SyncApi::new(token);
+
+    let payload = client.read_resources(Some(vec!["projects"])).await.unwrap();
+    let mut projects: HashMap<String, i64> = HashMap::new();
+    for (_, _project) in payload.projects.unwrap().into_iter().enumerate() {
+        projects.insert(_project.name, _project.id);
+    }
+
+    match op {
+        ItemAdd => {
+            let commands = ids
+                .into_iter()
+                .map(|id| todoist::types::WriteCommand {
+                    r#type: "item_add".to_string(),
+                    args: convert_item_to_hash(&todo.find_item_by_id(id), &projects),
+                    uuid: Uuid::new_v4().to_string(),
+                    temp_id: Uuid::new_v4().to_string(),
+                })
+                .collect::<Vec<todoist::types::WriteCommand>>();
+            let commands = todoist::types::WriteCommands(commands);
+            client.write_resources(commands).await;
+        }
+    }
+}
+
+fn convert_item_to_hash(item: &crate::Item, projects: &HashMap<String, i64>) -> serde_json::Value {
+    let cloned = item.clone();
+
+    json!({
+        "content": cloned.desc,
+        "project_id": projects.get(&cloned.tags[0]),
+        "due": {
+            "date": cloned.date,
+        }
+    })
 }
