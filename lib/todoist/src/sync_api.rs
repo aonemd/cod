@@ -60,7 +60,6 @@ impl SyncApi {
             .await?;
 
         let body = res.json::<serde_json::Value>().await?;
-        println!("{:#?}", body);
         let payload: Payload = serde_json::from_value(body)?;
 
         Ok(payload)
