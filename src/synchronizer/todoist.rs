@@ -61,22 +61,40 @@ pub async fn sync_up(todo: &mut Todo, ids: Vec<u32>, op: SyncUpOp, token: String
 
     match op {
         ItemAdd => {
-            let commands = ids
-                .into_iter()
-                .map(|id| todoist::types::WriteCommand {
+            let mut commands: Vec<todoist::types::WriteCommand> = vec![];
+            let mut temp_id_to_id_map: HashMap<String, u32> = HashMap::new();
+            for id in ids {
+                let temp_id = Uuid::new_v4().to_string();
+                let command = todoist::types::WriteCommand {
                     r#type: "item_add".to_string(),
-                    args: convert_item_to_hash(&todo.find_item_by_id(id), &projects),
+                    args: convert_item_to_hash(&mut todo.find_item_by_id(*id), &projects),
                     uuid: Uuid::new_v4().to_string(),
-                    temp_id: Uuid::new_v4().to_string(),
-                })
-                .collect::<Vec<todoist::types::WriteCommand>>();
+                    temp_id: Some(temp_id.clone()),
+                };
+
+                commands.push(command);
+                temp_id_to_id_map.insert(temp_id, *id);
+            }
             let commands = todoist::types::WriteCommands(commands);
-            client.write_resources(commands).await;
+            let write_response = client.write_resources(commands).await.unwrap();
+            for (k, v) in write_response.temp_id_mapping.into_iter() {
+                let id = match temp_id_to_id_map.get(&k) {
+                    Some(id) => id,
+                    None => continue,
+                };
+                let uid = v;
+                let item = todo.find_item_by_id(*id);
+                item.edit_item_uid(uid);
+                item.edit_item_source(ItemSource::Todoist);
+            }
         }
     }
 }
 
-fn convert_item_to_hash(item: &crate::Item, projects: &HashMap<String, i64>) -> serde_json::Value {
+fn convert_item_to_hash(
+    item: &mut crate::Item,
+    projects: &HashMap<String, i64>,
+) -> serde_json::Value {
     let cloned = item.clone();
 
     json!({
