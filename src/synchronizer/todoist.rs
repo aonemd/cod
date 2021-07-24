@@ -48,9 +48,10 @@ pub async fn sync_down(todo: &mut Todo, token: String) -> () {
 
 pub enum SyncUpOp {
     ItemAdd,
+    ItemDelete,
 }
 
-pub async fn sync_up(todo: &mut Todo, ids: Vec<u32>, op: SyncUpOp, token: String) -> () {
+pub async fn sync_up(todo: &mut Todo, ids: &Vec<u32>, op: SyncUpOp, token: String) -> () {
     let client = todoist::SyncApi::new(token);
 
     let payload = client.read_resources(Some(vec!["projects"])).await.unwrap();
@@ -60,7 +61,7 @@ pub async fn sync_up(todo: &mut Todo, ids: Vec<u32>, op: SyncUpOp, token: String
     }
 
     match op {
-        ItemAdd => {
+        SyncUpOp::ItemAdd => {
             let mut commands: Vec<todoist::types::WriteCommand> = vec![];
             let mut temp_id_to_id_map: HashMap<String, u32> = HashMap::new();
             for id in ids {
@@ -87,6 +88,19 @@ pub async fn sync_up(todo: &mut Todo, ids: Vec<u32>, op: SyncUpOp, token: String
                 item.edit_item_uid(uid);
                 item.edit_item_source(ItemSource::Todoist);
             }
+        }
+        SyncUpOp::ItemDelete => {
+            let commands = ids
+                .into_iter()
+                .map(|id| todoist::types::WriteCommand {
+                    r#type: "item_delete".to_string(),
+                    args: json!({ "id": todo.find_item_by_id(*id).uid }),
+                    uuid: Uuid::new_v4().to_string(),
+                    temp_id: None,
+                })
+                .collect::<Vec<todoist::types::WriteCommand>>();
+            let commands = todoist::types::WriteCommands(commands);
+            client.write_resources(commands).await;
         }
     }
 }

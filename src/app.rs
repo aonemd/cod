@@ -33,18 +33,19 @@ pub async fn run(cli: Cli) -> () {
             let parser = Parser::new(&content.join(" "));
 
             let item_id = todo.add(parser.desc, parser.date, parser.tags, Some(0), None);
-            let todo_serialized = TodoSerialized::from(&todo);
-            store.write(&todo_serialized);
 
             if let Some(token) = config.todoist_token {
                 synchronizer::todoist::sync_up(
                     &mut todo,
-                    vec![item_id],
+                    &vec![item_id],
                     synchronizer::todoist::SyncUpOp::ItemAdd,
                     token,
                 )
                 .await;
             }
+
+            let todo_serialized = TodoSerialized::from(&todo);
+            store.write(&todo_serialized);
         }
         Command::Edit { id, content } => {
             let parser = Parser::new(&content.join(" "));
@@ -59,6 +60,16 @@ pub async fn run(cli: Cli) -> () {
             store.write(&todo_serialized);
         }
         Command::Delete { ids } => {
+            if let Some(token) = config.todoist_token {
+                synchronizer::todoist::sync_up(
+                    &mut todo,
+                    &ids,
+                    synchronizer::todoist::SyncUpOp::ItemDelete,
+                    token,
+                )
+                .await;
+            }
+
             todo.delete_batch(ids);
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
