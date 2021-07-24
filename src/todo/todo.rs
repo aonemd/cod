@@ -87,9 +87,9 @@ impl Todo {
         item_to_edit.edit(desc, date, tags);
     }
 
-    pub fn toggle_completed_batch(&mut self, ids: Vec<u32>) -> () {
+    pub fn toggle_completed_batch(&mut self, ids: &Vec<u32>) -> () {
         for id in ids {
-            let item = self.find_item_by_id(id);
+            let item = self.find_item_by_id(*id);
             item.toggle_completed();
         }
     }
