@@ -48,6 +48,7 @@ pub async fn sync_down(todo: &mut Todo, token: String) -> () {
 
 pub enum SyncUpOp {
     ItemAdd,
+    ItemUpdate,
     ItemDelete,
 }
 
@@ -88,6 +89,32 @@ pub async fn sync_up(todo: &mut Todo, ids: &Vec<u32>, op: SyncUpOp, token: Strin
                 item.edit_item_uid(uid);
                 item.edit_item_source(ItemSource::Todoist);
             }
+        }
+        SyncUpOp::ItemUpdate => {
+            let mut commands: Vec<todoist::types::WriteCommand> = vec![];
+            for id in ids {
+                let temp_id = Uuid::new_v4().to_string();
+                let item = todo.find_item_by_id(*id);
+                let item_payload = json!({
+                    "id": item.uid,
+                    "content": item.desc,
+                    "project_id": projects.get(&item.tags[0]),
+                    "due": {
+                        "date": item.date,
+                    },
+                    "checked": if item.completed { 1 } else { 0 }
+                });
+                let command = todoist::types::WriteCommand {
+                    r#type: "item_update".to_string(),
+                    args: item_payload,
+                    uuid: Uuid::new_v4().to_string(),
+                    temp_id: Some(temp_id.clone()),
+                };
+
+                commands.push(command);
+            }
+            let commands = todoist::types::WriteCommands(commands);
+            client.write_resources(commands).await;
         }
         SyncUpOp::ItemDelete => {
             let commands = ids

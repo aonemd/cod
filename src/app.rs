@@ -51,6 +51,17 @@ pub async fn run(cli: Cli) -> () {
             let parser = Parser::new(&content.join(" "));
 
             todo.edit(id, parser.desc, parser.date, parser.tags);
+
+            if let Some(token) = config.todoist_token {
+                synchronizer::todoist::sync_up(
+                    &mut todo,
+                    &vec![id],
+                    synchronizer::todoist::SyncUpOp::ItemUpdate,
+                    token,
+                )
+                .await;
+            }
+
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
         }
