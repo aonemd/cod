@@ -35,6 +35,13 @@ cod SUBCOMMAND -h
 
 to view help message of a certain subcommand.
 
+## Integration
+
+### Todoist
+
+For Todoist integration, one environment variable must be set:
+  - `COD_TODOIST_TOKEN=token`. Token can be found in your [integration settings page](https://todoist.com/prefs/integrations)
+
 ## License
 
 See [LICENSE](https://github.com/aonemd/cod/blob/master/LICENSE).
