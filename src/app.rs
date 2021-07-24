@@ -66,7 +66,18 @@ pub async fn run(cli: Cli) -> () {
             store.write(&todo_serialized);
         }
         Command::Complete { ids } => {
-            todo.toggle_completed_batch(ids);
+            todo.toggle_completed_batch(&ids);
+
+            if let Some(token) = config.todoist_token {
+                synchronizer::todoist::sync_up(
+                    &mut todo,
+                    &ids,
+                    synchronizer::todoist::SyncUpOp::ItemUpdate,
+                    token,
+                )
+                .await;
+            }
+
             let todo_serialized = TodoSerialized::from(&todo);
             store.write(&todo_serialized);
         }
