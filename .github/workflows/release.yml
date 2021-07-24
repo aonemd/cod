@@ -1,23 +1,47 @@
-- name: Rust Release binary
-  uses: rust-build/rust-build.action@v1.0.3
-
-on:
+name: Build Binaries
+on: 
   release:
-    types: [created]
-
+    types: # This configuration does not affect the page_build event above
+      - created
 jobs:
-  release:
-    name: release ${{ matrix.target }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [x86_64-unknown-linux-musl, x86_64-apple-darwin]
+  build_for_mac:
+    name: MacOS
+    runs-on: macos-10.15
     steps:
       - uses: actions/checkout@master
-      - name: Compile and release
-        uses: rust-build/rust-build.action@latest
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+      - name: Rename binary
+        run: mv target/release/cod cod-macos64
+      - name: Upload to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUSTTARGET: ${{ matrix.target }}
-          EXTRA_FILES: "README.md LICENSE"
+        run: |
+          curl \
+            -f \
+            -sSL \
+            -XPOST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Length: $(stat -f%z cod-macos64)" \
+            -H "Content-Type: application/octet-stream" \
+            --upload-file "cod-macos64" \
+            "https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)/assets?name=cod-macos64"
+  build_for_linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+      - name: Rename binary
+        run: mv target/release/cod cod-linux-amd64
+      - name: Upload to release
+        uses: JasonEtco/upload-to-release@d648f1babf776de9cad881320bd9e9818fc3b262
+        with:
+          args: cod-linux-amd64 application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
