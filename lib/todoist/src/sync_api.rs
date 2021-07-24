@@ -1,4 +1,4 @@
-use super::types::{Payload, WriteCommands};
+use super::types::{Payload, WriteCommands, WriteResponse};
 
 use serde_json::json;
 
@@ -45,7 +45,7 @@ impl SyncApi {
     pub async fn write_resources(
         &self,
         commands: WriteCommands,
-    ) -> Result<Payload, Box<dyn std::error::Error>> {
+    ) -> Result<WriteResponse, Box<dyn std::error::Error>> {
         let res = self
             .http_client
             .get(&self.uri)
@@ -60,9 +60,9 @@ impl SyncApi {
             .await?;
 
         let body = res.json::<serde_json::Value>().await?;
-        let payload: Payload = serde_json::from_value(body)?;
+        let data: WriteResponse = serde_json::from_value(body)?;
 
-        Ok(payload)
+        Ok(data)
     }
 }
 

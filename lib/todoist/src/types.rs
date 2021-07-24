@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -52,5 +54,11 @@ pub struct WriteCommand {
     pub r#type: String,
     pub args: serde_json::Value,
     pub uuid: String,
-    pub temp_id: String,
+    pub temp_id: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WriteResponse {
+    pub temp_id_mapping: HashMap<String, i64>,
+    pub sync_status: HashMap<String, String>,
 }
