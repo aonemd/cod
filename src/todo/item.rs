@@ -68,6 +68,14 @@ impl Item {
     pub fn toggle_completed(&mut self) -> () {
         self.completed = !self.completed;
     }
+
+    pub fn edit_item_source(&mut self, new_source: ItemSource) -> () {
+        self.item_source = new_source
+    }
+
+    pub fn edit_item_uid(&mut self, uid: i64) -> () {
+        self.uid = uid;
+    }
 }
 
 impl Ord for Item {
