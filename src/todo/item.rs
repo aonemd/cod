@@ -2,14 +2,14 @@ use super::item_source::ItemSource;
 
 use std::cmp::Ordering;
 
-use chrono::NaiveDate;
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Eq, Serialize, Deserialize)]
 pub struct Item {
     pub id: u32,
     pub desc: String,
-    pub date: NaiveDate,
+    pub date: NaiveDateTime,
     pub tags: Vec<String>,
     pub completed: bool,
     pub uid: i64,
@@ -20,7 +20,7 @@ impl Item {
     pub fn new(
         id: u32,
         desc: String,
-        date: NaiveDate,
+        date: NaiveDateTime,
         tags: Vec<String>,
         completed: bool,
         uid: i64,
@@ -40,7 +40,7 @@ impl Item {
     pub fn edit(
         &mut self,
         desc: Option<String>,
-        date: Option<NaiveDate>,
+        date: Option<NaiveDateTime>,
         tags: Option<Vec<String>>,
     ) -> () {
         match desc {

@@ -3,7 +3,7 @@ use crate::Todo;
 
 use std::collections::HashMap;
 
-use chrono::NaiveDate;
+use chrono::NaiveDateTime;
 use serde_json::json;
 use uuid::Uuid;
 
@@ -24,7 +24,17 @@ pub async fn sync_down(todo: &mut Todo, token: String) -> () {
     for (_, _item) in items.into_iter().enumerate() {
         let desc = Some(_item.content);
         let date = match _item.due.as_ref() {
-            Some(due_date) => Some(NaiveDate::parse_from_str(&due_date.date, "%Y-%m-%d").unwrap()),
+            Some(due_date) => {
+                // Some(NaiveDateTime::parse_from_str(&due_date.date, "%Y-%m-%dT%H:%M:%S").unwrap())
+                Some(
+                    NaiveDateTime::parse_from_str(&due_date.date, "%Y-%m-%dT%H:%M:%S")
+                        .or(NaiveDateTime::parse_from_str(
+                            &format!("{}{}", &due_date.date, "T12:00:00"),
+                            "%Y-%m-%dT%H:%M:%S",
+                        ))
+                        .unwrap(),
+                )
+            }
             _ => None,
         };
         let project = projects.get(&_item.project_id).unwrap();

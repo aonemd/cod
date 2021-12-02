@@ -3,7 +3,7 @@ use super::item_source::ItemSource;
 use super::todo_presenter::TodoPresenter;
 use super::todo_serialized::TodoSerialized;
 
-use chrono::{Local, NaiveDate};
+use chrono::{Local, NaiveDateTime};
 
 #[derive(Debug)]
 pub struct Todo {
@@ -42,7 +42,7 @@ impl Todo {
     pub fn edit_or_add(
         &mut self,
         desc: Option<String>,
-        date: Option<NaiveDate>,
+        date: Option<NaiveDateTime>,
         tags: Option<Vec<String>>,
         uid: Option<i64>,
         item_source: Option<ItemSource>,
@@ -57,14 +57,14 @@ impl Todo {
     pub fn add(
         &mut self,
         desc: Option<String>,
-        date: Option<NaiveDate>,
+        date: Option<NaiveDateTime>,
         tags: Option<Vec<String>>,
         uid: Option<i64>,
         item_source: Option<ItemSource>,
     ) -> u32 {
         let next_id = self.get_next_id();
         let desc = desc.expect("Item description cannot be empty!");
-        let date = date.unwrap_or(Local::today().naive_local());
+        let date = date.unwrap_or(Local::now().naive_local());
         let tags = tags.unwrap_or(vec![]);
         let completed = false;
         let uid = uid.unwrap_or(0);
@@ -80,7 +80,7 @@ impl Todo {
         &mut self,
         id: u32,
         desc: Option<String>,
-        date: Option<NaiveDate>,
+        date: Option<NaiveDateTime>,
         tags: Option<Vec<String>>,
     ) {
         let item_to_edit = self.find_item_by_id(id);

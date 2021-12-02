@@ -48,11 +48,11 @@ impl<'a> ItemPresenter<'a> {
     }
 
     fn present_date(&self) -> (String, usize) {
-        let _today = Local::today().naive_local();
+        let _today = Local::now().naive_local().date();
         let _yesterday = _today.pred();
         let _tomorrow = _today.succ();
 
-        let (date, uncolored_len) = match self.item.date {
+        let (date, uncolored_len) = match self.item.date.date() {
             a if a == _yesterday => {
                 let mut date_str = String::from("@");
                 date_str.push_str("Yesterday");
@@ -68,9 +68,9 @@ impl<'a> ItemPresenter<'a> {
                 date_str.push_str("Tomorrow");
                 (date_str.cyan().to_string(), date_str.len())
             }
-            _ => {
+            a => {
                 let mut date_str = String::from("@");
-                date_str.push_str(&self.item.date.to_string());
+                date_str.push_str(&a.to_string());
                 (date_str.cyan().to_string(), date_str.len())
             }
         };

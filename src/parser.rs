@@ -1,4 +1,4 @@
-use chrono::NaiveDate;
+use chrono::NaiveDateTime;
 use date_time_parser::DateParser;
 use regex::Regex;
 
@@ -7,7 +7,7 @@ const TAG_PATTERN: &str = r"\+[a-zA-Z0-9_]+";
 
 pub struct Parser {
     pub desc: Option<String>,
-    pub date: Option<NaiveDate>,
+    pub date: Option<NaiveDateTime>,
     pub tags: Option<Vec<String>>,
 }
 
@@ -34,15 +34,17 @@ impl Parser {
         }
     }
 
-    fn parse_date(input: &str) -> Option<NaiveDate> {
+    fn parse_date(input: &str) -> Option<NaiveDateTime> {
         let re = Regex::new(DATE_PATTERN).unwrap();
         if let Some(date) = re.captures(input) {
-            DateParser::parse(&date[0][1..]).or(
-                match NaiveDate::parse_from_str(&date[0][1..], "%Y-%m-%d") {
-                    Ok(d) => Some(d),
-                    _ => None,
-                },
-            )
+            DateParser::parse(&date[0][1..])
+                .map(|pd| pd.and_hms(12, 0, 0))
+                .or(
+                    match NaiveDateTime::parse_from_str(&date[0][1..], "%Y-%m-%dT%H:%M:%S") {
+                        Ok(d) => Some(d),
+                        _ => None,
+                    },
+                )
         } else {
             None
         }
@@ -96,7 +98,7 @@ mod parser_tests {
     #[test]
     fn test_parse_date_formal() -> () {
         let parser = Parser::new("Hello world @2021-04-13 +personal");
-        let test_date = Some(NaiveDate::from_ymd(2021, 04, 13));
+        let test_date = Some(NaiveDateTime::from_ymd(2021, 04, 13));
 
         assert_eq!(parser.date, test_date);
     }
